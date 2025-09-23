@@ -39,7 +39,7 @@ resource "aws_mq_broker" "this" {
   engine_type        = "RabbitMQ"
   engine_version     = var.engine_version
   host_instance_type = var.instance_type
-  deployment_mode    = var.deployment_mode
+  deployment_mode    = "CLUSTER_MULTI_AZ"
 
   publicly_accessible = var.publicly_accessible
   security_groups     = var.publicly_accessible ? null : [aws_security_group.mq[0].id]
@@ -59,10 +59,12 @@ resource "aws_mq_broker" "this" {
   auto_minor_version_upgrade = true
 
   maintenance_window_start_time {
-    day_of_week = "SUNDAY"
-    time_of_day = "02:00"
-    time_zone   = "UTC"
+    day_of_week = var.maintenance_day
+    time_of_day = var.maintenance_time
+    time_zone   = var.maintenance_tz
   }
+
+  tags = var.tags
 }
 
 data "aws_mq_broker" "this" {
