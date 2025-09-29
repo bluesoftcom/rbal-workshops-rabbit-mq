@@ -1,0 +1,5 @@
+C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\MonitoringTracingApp\obj\Debug\net9.0\MonitoringTracingApp.csproj.AssemblyReference.cache
+C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\MonitoringTracingApp\obj\Debug\net9.0\MonitoringTracingApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\MonitoringTracingApp\obj\Debug\net9.0\MonitoringTracingApp.AssemblyInfoInputs.cache
+C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\MonitoringTracingApp\obj\Debug\net9.0\MonitoringTracingApp.AssemblyInfo.cs
+C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\MonitoringTracingApp\obj\Debug\net9.0\MonitoringTracingApp.csproj.CoreCompileInputs.cache
