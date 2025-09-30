@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "BEw2KjIv/gc=",
+  "dgSpecHash": "8dOVK9XMKQ8=",
   "success": true,
-  "projectFilePath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\InboxOutboxPatternApp\\InboxOutboxPattern.csproj",
+  "projectFilePath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\InboxOutboxPatternApp\\InboxOutboxPattern.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\user\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

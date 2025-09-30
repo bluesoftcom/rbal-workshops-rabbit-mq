@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "veIIiFq2NeM=",
+  "dgSpecHash": "SNBC/JzDa/4=",
   "success": true,
-  "projectFilePath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\HeaderRoutingApp\\HeaderRoutingApp.csproj",
+  "projectFilePath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\HeaderRoutingApp\\HeaderRoutingApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\user\\.nuget\\packages\\rabbitmq.client\\7.1.2\\rabbitmq.client.7.1.2.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\system.configuration.configurationmanager\\9.0.9\\system.configuration.configurationmanager.9.0.9.nupkg.sha512",

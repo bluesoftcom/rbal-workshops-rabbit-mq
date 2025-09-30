@@ -300,11 +300,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\BasicPublisherApp\\BasicPublisherApp.csproj",
+      "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\BasicPublisherApp\\BasicPublisherApp.csproj",
       "projectName": "BasicPublisherApp",
-      "projectPath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\BasicPublisherApp\\BasicPublisherApp.csproj",
+      "projectPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\BasicPublisherApp\\BasicPublisherApp.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\BasicPublisherApp\\obj\\",
+      "outputPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\BasicPublisherApp\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"

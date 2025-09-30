@@ -23,3 +23,12 @@ C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\AccessControlApp\obj\Debug\net9.
 C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\AccessControlApp\obj\Debug\net9.0\ref\AccessControlApp.dll
 C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\AccessControlApp\bin\Debug\net9.0\RabbitMQ.Client.dll
 C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\AccessControlApp\bin\Debug\net9.0\System.Threading.RateLimiting.dll
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\AccessControlApp\obj\Debug\net9.0\AccessControlApp.csproj.AssemblyReference.cache
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\AccessControlApp\obj\Debug\net9.0\AccessControlApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\AccessControlApp\obj\Debug\net9.0\AccessControlApp.AssemblyInfoInputs.cache
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\AccessControlApp\obj\Debug\net9.0\AccessControlApp.AssemblyInfo.cs
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\AccessControlApp\obj\Debug\net9.0\AccessControlApp.csproj.CoreCompileInputs.cache
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\AccessControlApp\obj\Debug\net9.0\AccessControlApp.sourcelink.json
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\AccessControlApp\obj\Debug\net9.0\AccessControlApp.dll
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\AccessControlApp\obj\Debug\net9.0\refint\AccessControlApp.dll
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\AccessControlApp\obj\Debug\net9.0\AccessControlApp.pdb

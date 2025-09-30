@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "J0z/7B9ABEQ=",
+  "dgSpecHash": "2nn3pRm+nUM=",
   "success": true,
-  "projectFilePath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\SchemaApp\\SchemaApp.csproj",
+  "projectFilePath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\SchemaApp\\SchemaApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\user\\.nuget\\packages\\apache.avro\\1.12.0\\apache.avro.1.12.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\namotion.reflection\\3.4.3\\namotion.reflection.3.4.3.nupkg.sha512",

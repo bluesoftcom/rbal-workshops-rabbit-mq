@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\BindingApp\\BindingApp.csproj": {}
+    "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\BindingApp\\BindingApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\BindingApp\\BindingApp.csproj": {
+    "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\BindingApp\\BindingApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\BindingApp\\BindingApp.csproj",
+        "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\BindingApp\\BindingApp.csproj",
         "projectName": "BindingApp",
-        "projectPath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\BindingApp\\BindingApp.csproj",
+        "projectPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\BindingApp\\BindingApp.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\BindingApp\\obj\\",
+        "outputPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\BindingApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"

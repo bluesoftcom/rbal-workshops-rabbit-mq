@@ -28,16 +28,14 @@ public class BasicPublisher
             Port = port,
             UserName = userName,
             Password = password,
-            VirtualHost = virtualHost,
-            // Enable ssl connection
-            Ssl = new SslOption { Enabled = true, ServerName = host }
+            VirtualHost = virtualHost
         };
 
         // Create a connection asynchronously - wait for completion of the Task to utilize the connection object
         using IConnection conn = await factory.CreateConnectionAsync();
 
-        // Create a channel for the rabbitMQ connection
-        using IChannel ch = await conn.CreateChannelAsync.CreateChannelAsync();
+        // Create a consumer dedicated channel for the rabbitMQ connection
+        using IChannel ch = await conn.CreateChannelAsync();
 
         #endregion
 
@@ -47,7 +45,7 @@ public class BasicPublisher
         // type - direct: we are publishing a message into a queue bound to the exchange
         // durable - true: the exchange will be recreated in case of RabbitMQ restart
         // autoDelete - false: the exchange will not be deleted once all message recipients are disconnected
-        await ch.ExchangeDeclareAsync(exchange: "amq.direct", type: "direct", durable: true, autoDelete: false, arguments: null);
+        await ch.ExchangeDeclareAsync(exchange: "amq.direct", type: ExchangeType.Direct, durable: true, autoDelete: false, arguments: null);
 
         // Declare a Queue - this is the representation of the transport layer that will store the published messages, 
         // for the consumers to read
@@ -79,7 +77,7 @@ public class BasicPublisher
 
         #region Validate the publish
 
-        // Take a peak at the queue and check if we did get a message out
+        // Pull message from the queue and check if we did get a message out
         var res = await ch.BasicGetAsync(queue: "q1", autoAck: true);
         Console.WriteLine(res != null ? "OK" : "FAILED");
         

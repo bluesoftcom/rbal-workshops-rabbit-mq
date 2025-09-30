@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\BasicConsumerApp\\BasicConsumerApp.csproj": {}
+    "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\BasicConsumerApp\\BasicConsumerApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\BasicConsumerApp\\BasicConsumerApp.csproj": {
+    "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\BasicConsumerApp\\BasicConsumerApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\BasicConsumerApp\\BasicConsumerApp.csproj",
+        "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\BasicConsumerApp\\BasicConsumerApp.csproj",
         "projectName": "BasicConsumerApp",
-        "projectPath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\BasicConsumerApp\\BasicConsumerApp.csproj",
+        "projectPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\BasicConsumerApp\\BasicConsumerApp.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\BasicConsumerApp\\obj\\",
+        "outputPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\BasicConsumerApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"

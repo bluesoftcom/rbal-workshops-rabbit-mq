@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\HeaderRoutingApp\\HeaderRoutingApp.csproj": {}
+    "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\HeaderRoutingApp\\HeaderRoutingApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\HeaderRoutingApp\\HeaderRoutingApp.csproj": {
+    "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\HeaderRoutingApp\\HeaderRoutingApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\HeaderRoutingApp\\HeaderRoutingApp.csproj",
+        "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\HeaderRoutingApp\\HeaderRoutingApp.csproj",
         "projectName": "HeaderRoutingApp",
-        "projectPath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\HeaderRoutingApp\\HeaderRoutingApp.csproj",
+        "projectPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\HeaderRoutingApp\\HeaderRoutingApp.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\HeaderRoutingApp\\obj\\",
+        "outputPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\HeaderRoutingApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\AccessControlApp\\AccessControlApp.csproj": {}
+    "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\AccessControlApp\\AccessControlApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\AccessControlApp\\AccessControlApp.csproj": {
+    "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\AccessControlApp\\AccessControlApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\AccessControlApp\\AccessControlApp.csproj",
+        "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\AccessControlApp\\AccessControlApp.csproj",
         "projectName": "AccessControlApp",
-        "projectPath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\AccessControlApp\\AccessControlApp.csproj",
+        "projectPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\AccessControlApp\\AccessControlApp.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\AccessControlApp\\obj\\",
+        "outputPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\AccessControlApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"

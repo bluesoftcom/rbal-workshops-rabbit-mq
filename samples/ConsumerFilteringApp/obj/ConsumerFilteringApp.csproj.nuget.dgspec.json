@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\ConsumerFilteringApp\\ConsumerFilteringApp.csproj": {}
+    "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\ConsumerFilteringApp\\ConsumerFilteringApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\ConsumerFilteringApp\\ConsumerFilteringApp.csproj": {
+    "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\ConsumerFilteringApp\\ConsumerFilteringApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\ConsumerFilteringApp\\ConsumerFilteringApp.csproj",
+        "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\ConsumerFilteringApp\\ConsumerFilteringApp.csproj",
         "projectName": "ConsumerFilteringApp",
-        "projectPath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\ConsumerFilteringApp\\ConsumerFilteringApp.csproj",
+        "projectPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\ConsumerFilteringApp\\ConsumerFilteringApp.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\ConsumerFilteringApp\\obj\\",
+        "outputPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\ConsumerFilteringApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"

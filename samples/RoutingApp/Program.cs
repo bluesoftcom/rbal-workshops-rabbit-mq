@@ -38,5 +38,8 @@ public class Routing
         await ch.QueueBindAsync("q.billing", "ex.direct", "billing.charge", arguments: null);
         await ch.QueueBindAsync("q.analytics", "ex.topic", "order.*.created", arguments: null);
         await ch.QueueBindAsync("q.analytics", "ex.fanout", "", arguments: null);
+
+        // 3 consumers 1 producer-produces into 3 exchanges
+        // configure 3 consumers to rea from these topics
     }
 }

@@ -300,11 +300,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\CommandEventDataApp\\CommandEventDataApp.csproj",
+      "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\CommandEventDataApp\\CommandEventDataApp.csproj",
       "projectName": "CommandEventDataApp",
-      "projectPath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\CommandEventDataApp\\CommandEventDataApp.csproj",
+      "projectPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\CommandEventDataApp\\CommandEventDataApp.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\user\\.vscode\\Projects\\WorkshopRabbitMQ\\CommandEventDataApp\\obj\\",
+      "outputPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\samples\\CommandEventDataApp\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"

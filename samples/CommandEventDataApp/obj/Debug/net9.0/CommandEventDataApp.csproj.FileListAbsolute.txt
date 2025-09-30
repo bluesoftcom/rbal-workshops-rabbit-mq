@@ -23,3 +23,12 @@ C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\CommandEventDataApp\obj\Debug\ne
 C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\CommandEventDataApp\obj\Debug\net9.0\ref\CommandEventDataApp.dll
 C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\CommandEventDataApp\bin\Debug\net9.0\RabbitMQ.Client.dll
 C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\CommandEventDataApp\bin\Debug\net9.0\System.Threading.RateLimiting.dll
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\CommandEventDataApp\obj\Debug\net9.0\CommandEventDataApp.csproj.AssemblyReference.cache
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\CommandEventDataApp\obj\Debug\net9.0\CommandEventDataApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\CommandEventDataApp\obj\Debug\net9.0\CommandEventDataApp.AssemblyInfoInputs.cache
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\CommandEventDataApp\obj\Debug\net9.0\CommandEventDataApp.AssemblyInfo.cs
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\CommandEventDataApp\obj\Debug\net9.0\CommandEventDataApp.csproj.CoreCompileInputs.cache
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\CommandEventDataApp\obj\Debug\net9.0\CommandEventDataApp.sourcelink.json
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\CommandEventDataApp\obj\Debug\net9.0\CommandEventDataApp.dll
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\CommandEventDataApp\obj\Debug\net9.0\refint\CommandEventDataApp.dll
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\CommandEventDataApp\obj\Debug\net9.0\CommandEventDataApp.pdb

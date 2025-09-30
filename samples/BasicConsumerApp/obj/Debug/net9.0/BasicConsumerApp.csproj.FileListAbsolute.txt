@@ -23,3 +23,12 @@ C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\BasicConsumerApp\obj\Debug\net9.
 C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\BasicConsumerApp\obj\Debug\net9.0\ref\BasicConsumerApp.dll
 C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\BasicConsumerApp\bin\Debug\net9.0\RabbitMQ.Client.dll
 C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\BasicConsumerApp\bin\Debug\net9.0\System.Threading.RateLimiting.dll
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\BasicConsumerApp\obj\Debug\net9.0\BasicConsumerApp.csproj.AssemblyReference.cache
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\BasicConsumerApp\obj\Debug\net9.0\BasicConsumerApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\BasicConsumerApp\obj\Debug\net9.0\BasicConsumerApp.AssemblyInfoInputs.cache
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\BasicConsumerApp\obj\Debug\net9.0\BasicConsumerApp.AssemblyInfo.cs
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\BasicConsumerApp\obj\Debug\net9.0\BasicConsumerApp.csproj.CoreCompileInputs.cache
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\BasicConsumerApp\obj\Debug\net9.0\BasicConsumerApp.sourcelink.json
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\BasicConsumerApp\obj\Debug\net9.0\BasicConsumerApp.dll
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\BasicConsumerApp\obj\Debug\net9.0\refint\BasicConsumerApp.dll
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\BasicConsumerApp\obj\Debug\net9.0\BasicConsumerApp.pdb

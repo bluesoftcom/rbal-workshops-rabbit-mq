@@ -45,7 +45,7 @@ public class BasicConsumer
             arguments: null
             );
 
-        var consumer = new AsyncEventingBasicConsumer(ch);
+        IAsyncBasicConsumer consumer = new AsyncEventingBasicConsumer(ch);
         consumer.ReceivedAsync += async (model, ea) =>
         {
             var body = ea.Body.ToArray();
