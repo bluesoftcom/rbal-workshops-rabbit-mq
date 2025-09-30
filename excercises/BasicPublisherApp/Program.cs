@@ -17,6 +17,7 @@ public class BasicPublisher
         string virtualHost = ConfigurationManager.AppSettings["virtualHost"] ?? string.Empty;
 
         // Create a factory, provide to the constructor: HostName, Port, UserName, Password, VirtualHost
+        // Ensure to add SSL options with Enabled = true and ServerName = host
         ConnectionFactory factory = throw new NotImplementedException();
 
         // Create a connection using connection factory

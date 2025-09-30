@@ -16,7 +16,7 @@ public class BasicConsumer
         string password = ConfigurationManager.AppSettings["password"] ?? string.Empty;
         string virtualHost = ConfigurationManager.AppSettings["virtualHost"] ?? string.Empty;
 
-        // Create a factory
+        // Create a connection factory
 
         // Create a connection using connection factory
 
@@ -35,8 +35,7 @@ public class BasicConsumer
 
         };
 
-        // NOTE: You may need to adjust this to use the correct consumer registration for your RabbitMQ client version
-        // ch.BasicConsume(queue: "q1", autoAck: false, consumer: consumer);
+        // Run the BasicConsumeAsync to start consuming messages from the queue
 
         Console.WriteLine("Basic consumer started. Press [enter] to exit.");
         Console.ReadLine();
