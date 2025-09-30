@@ -1,0 +1,6 @@
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\CommandEventData\obj\Debug\net9.0\CommandEventData.csproj.AssemblyReference.cache
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\CommandEventData\obj\Debug\net9.0\CommandEventData.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\CommandEventData\obj\Debug\net9.0\CommandEventData.AssemblyInfoInputs.cache
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\CommandEventData\obj\Debug\net9.0\CommandEventData.AssemblyInfo.cs
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\CommandEventData\obj\Debug\net9.0\CommandEventData.csproj.CoreCompileInputs.cache
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\samples\CommandEventData\obj\Debug\net9.0\CommandEventData.sourcelink.json
