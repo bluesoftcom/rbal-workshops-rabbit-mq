@@ -8,12 +8,18 @@ public class Binding
 {
     public static async Task Main()
     {
+        #region Read configuration
+
         string host = ConfigurationManager.AppSettings["host"] ?? string.Empty;
         int configPort;
         int port = int.TryParse(ConfigurationManager.AppSettings["port"], out configPort) ? configPort : 5671;
         string userName = ConfigurationManager.AppSettings["userName"] ?? string.Empty;
         string password = ConfigurationManager.AppSettings["password"] ?? string.Empty;
         string virtualHost = ConfigurationManager.AppSettings["virtualHost"] ?? string.Empty;
+
+        #endregion
+
+        #region Initialize connection to RabbitMQ
 
         var factory = new ConnectionFactory
         {
@@ -27,6 +33,9 @@ public class Binding
 
         IConnection conn = await factory.CreateConnectionAsync();
         IChannel ch = await conn.CreateChannelAsync();
+
+        #endregion
+
 
         await ch.ExchangeDeclareAsync(exchange: "ex.binding", type: ExchangeType.Direct, durable: true, autoDelete: false, arguments: null);
         await ch.QueueDeclareAsync("q.binding", durable: true, exclusive: false, autoDelete: false, arguments: null);
