@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\excercises\\BasicPublisherApp\\BasicPublisherApp.csproj": {}
+    "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\excercises\\ConnectionTestApp\\ConnectionTestApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\excercises\\BasicPublisherApp\\BasicPublisherApp.csproj": {
+    "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\excercises\\ConnectionTestApp\\ConnectionTestApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\excercises\\BasicPublisherApp\\BasicPublisherApp.csproj",
-        "projectName": "BasicPublisherApp",
-        "projectPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\excercises\\BasicPublisherApp\\BasicPublisherApp.csproj",
+        "projectUniqueName": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\excercises\\ConnectionTestApp\\ConnectionTestApp.csproj",
+        "projectName": "ConnectionTestApp",
+        "projectPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\excercises\\ConnectionTestApp\\ConnectionTestApp.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\excercises\\BasicPublisherApp\\obj\\",
+        "outputPath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\excercises\\ConnectionTestApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"

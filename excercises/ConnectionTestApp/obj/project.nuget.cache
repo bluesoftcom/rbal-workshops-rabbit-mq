@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "V66+YxHeItg=",
+  "dgSpecHash": "q9PZoY5LSms=",
   "success": true,
-  "projectFilePath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\excercises\\BasicPublisherApp\\BasicPublisherApp.csproj",
+  "projectFilePath": "C:\\Users\\user\\.vscode\\Projects\\RootWorkshopRabbitMQ\\rbal-workshops-rabbit-mq\\excercises\\ConnectionTestApp\\ConnectionTestApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\user\\.nuget\\packages\\rabbitmq.client\\7.1.2\\rabbitmq.client.7.1.2.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\system.configuration.configurationmanager\\9.0.9\\system.configuration.configurationmanager.9.0.9.nupkg.sha512",

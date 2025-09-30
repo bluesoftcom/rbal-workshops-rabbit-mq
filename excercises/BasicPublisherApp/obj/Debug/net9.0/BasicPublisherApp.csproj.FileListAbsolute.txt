@@ -23,3 +23,12 @@ C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\BasicPublisherApp\obj\Debug\net9
 C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\BasicPublisherApp\obj\Debug\net9.0\ref\BasicPublisherApp.dll
 C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\BasicPublisherApp\bin\Debug\net9.0\RabbitMQ.Client.dll
 C:\Users\user\.vscode\Projects\WorkshopRabbitMQ\BasicPublisherApp\bin\Debug\net9.0\System.Threading.RateLimiting.dll
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\excercises\BasicPublisherApp\obj\Debug\net9.0\BasicPublisherApp.csproj.AssemblyReference.cache
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\excercises\BasicPublisherApp\obj\Debug\net9.0\BasicPublisherApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\excercises\BasicPublisherApp\obj\Debug\net9.0\BasicPublisherApp.AssemblyInfoInputs.cache
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\excercises\BasicPublisherApp\obj\Debug\net9.0\BasicPublisherApp.AssemblyInfo.cs
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\excercises\BasicPublisherApp\obj\Debug\net9.0\BasicPublisherApp.csproj.CoreCompileInputs.cache
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\excercises\BasicPublisherApp\obj\Debug\net9.0\BasicPublisherApp.sourcelink.json
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\excercises\BasicPublisherApp\obj\Debug\net9.0\BasicPublisherApp.dll
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\excercises\BasicPublisherApp\obj\Debug\net9.0\refint\BasicPublisherApp.dll
+C:\Users\user\.vscode\Projects\RootWorkshopRabbitMQ\rbal-workshops-rabbit-mq\excercises\BasicPublisherApp\obj\Debug\net9.0\BasicPublisherApp.pdb
