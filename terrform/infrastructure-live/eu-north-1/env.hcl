@@ -15,22 +15,19 @@ locals {
     admin_username = "admin"
     admin_password = "79ecbd67-3c9d-487d-aaf4-daa1e8585df0"
   }
+
+   mssql = {
+     instance = "db.t3.micro"
+     username = "admin"
+     password = "ChangeMe-Strong#2025!"
+   }
   users = [
     {
-      name      = "workshop_app",
-      password  = "AppP@ssw0rd123!",
-      tags      = ["management"],
-      configure = ".*",
-      write     = ".*",
-      read      = ".*"
+      name = "workshop_app", password = "AppP@ssw0rd123!", tags = ["management"], configure = ".*", write = ".*", read = ".*"
     },
     {
-      name      = "viewer",
-      password  = "ViewerP@ssw0rd1!",
-      tags      = ["monitoring"],
-      configure = "^$",
-      write     = "^$",
-      read      = "^orders\\..*"
-    }
+      name = "viewer", password = "ViewerP@ssw0rd1!", tags = ["monitoring"], configure = "^$", write = "^$", read = "^orders\\..*"
+    },
+
   ]
 }

@@ -19,6 +19,22 @@ resource "rabbitmq_user" "users" {
   tags     = try(each.value.tags, ["management"])
 }
 
+resource "rabbitmq_vhost" "per_user" {
+  for_each = local.users_map
+  name     = each.value.name
+}
+
+resource "rabbitmq_permissions" "per_user_full" {
+  for_each = local.users_map
+  user  = rabbitmq_user.users[each.key].name
+  vhost = rabbitmq_vhost.per_user[each.key].name
+  permissions {
+    configure = ".*"
+    write     = ".*"
+    read      = ".*"
+  }
+}
+
 resource "rabbitmq_permissions" "perms" {
   for_each = local.users_map
   user  = rabbitmq_user.users[each.key].name
@@ -36,4 +52,8 @@ output "created_users" {
 
 output "vhost" {
   value = rabbitmq_vhost.this.name
+}
+
+output "per_user_vhosts" {
+  value = [for k, v in rabbitmq_vhost.per_user : v.name]
 }
