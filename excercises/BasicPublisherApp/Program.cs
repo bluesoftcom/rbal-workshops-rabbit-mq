@@ -18,30 +18,85 @@ public class BasicPublisher
 
         // Create a factory, provide to the constructor: HostName, Port, UserName, Password, VirtualHost
         // Ensure to add SSL options with Enabled = true and ServerName = host
-        ConnectionFactory factory = throw new NotImplementedException();
+        ConnectionFactory factory = new ConnectionFactory
+        {
+            HostName = host,
+            Port = port,
+            UserName = userName,
+            Password = password,
+            VirtualHost = virtualHost,
+            Ssl = new SslOption
+            {
+                Enabled = true,
+                ServerName = host
+            }
+        };
 
         // Create a connection using connection factory
-        IConnection conn = null;
+        using IConnection conn = await factory.CreateConnectionAsync();
+
         // Create a channel for the connection
-        IChannel ch = null;
+        using IChannel ch = await conn.CreateChannelAsync();
 
         // Declare an exchange we want to produce messages into
         // Provide arguments: exchange, type, durable, autoDelete
-        await ch.ExchangeDeclareAsync();
+        await ch.ExchangeDeclareAsync(
+            exchange: "ex.example",
+            type: ExchangeType.Direct,
+            durable: true,
+            autoDelete: false,
+            arguments: null
+        );
 
         // Declare a queue we want our messages to go to
         // Provide arguments: queue, durable, exclusive, autoDelete
+        await ch.QueueDeclareAsync(
+            queue: "q.green",
+            durable: true,
+            exclusive: false,
+            autoDelete: false,
+            arguments: null
+        );
+
+        await ch.QueueDeclareAsync(
+            queue: "q.blue",
+            durable: true,
+            exclusive: false,
+            autoDelete: false,
+            arguments: null
+        );
 
         // Declare a Binding to the queue,
         // Provide arguments: queue, exchange and routingKey
+        await ch.QueueBindAsync(
+            queue: "q.green",
+            exchange: "ex.example",
+            routingKey: "green",
+            arguments: null
+        );
+        await ch.QueueBindAsync(
+            queue: "q.blue",
+            exchange: "ex.example",
+            routingKey: "blue",
+            arguments: null
+        );
 
-        // create a message body as string and get the UTF8 encoded bytes
-        bytes[] body = null;
+        var rnd = new Random();
+        string[] options = { "green", "blue" };
+        for (int i = 0; i < 100; i++)
+        {
+            string color = options[rnd.Next(options.Length)];
 
-        // publish the message with BasicPublishAsync, into the defined exchange, use the correct routingKey
+            // create a message body as string and get the UTF8 encoded bytes
+            byte[] body = Encoding.UTF8.GetBytes("This is a " + color + " message!");
 
-        // Provide the queue to validate the message production
-        var res = await ch.BasicGetAsync(queue: "", autoAck: true);
-        Console.WriteLine(res != null ? "OK" : "FAILED");
+            // publish the message with BasicPublishAsync, into the defined exchange, use the correct routingKey
+            await ch.BasicPublishAsync(
+                exchange: "ex.example",
+                routingKey: color,
+                body: body
+            );
+        }
+        
     }
 }
