@@ -4,8 +4,6 @@ using System.Text;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
 using Newtonsoft.Json;
-using NJsonSchema;
-using NJsonSchema.Generation;
 using Avro;
 using Avro.Generic;
 using Avro.IO;
@@ -42,18 +40,25 @@ public class Program
         #endregion
 
         // Generate JSON Schema
-        // get the system text json schema settings
-        // get the json schema generator with settings as the parameter
-        // use the gnerator to generate the schema out of the type of userV1 object
-        // convert the schema to json
+        var generator = new JSchemaGenerator();
+        var jsonSchema = generator.Generate(typeof(UserV1)).ToJson();
+        // var generator = new JsonSchemaGenerator(new JsonSchemaGeneratorSettings());
+        // var schema = generator.Generate(typeof(UserV1));
+        // var jsonSchema = schema.ToJson();
 
         #region Define Messaging Layer
 
         // Define queue with schema metadata in arguments
-        var queueName = "";
-        var routingKey = "";
+        var queueName = "q.common";
+        var routingKey = userName;
 
         // Declare queue with schema information in arguments as a new Dictionary of string and object
+        var queueArguments = new Dictionary<string, object>
+        {
+            { "x-schema-type", "json" },
+            { "x-schema-version", "V1" },
+            { "x-schema-definition", jsonSchema }
+        };
         //provide x-schema-type
         //provide x-schema-version
         //provide x-schema-definition with the json schema
