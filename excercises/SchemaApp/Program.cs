@@ -50,17 +50,8 @@ public class Program
         #region Define Messaging Layer
 
         // Define queue with schema metadata in arguments
-        var queueName = "user.events.v1";
-        var exchangeName = "user.exchange";
-        var routingKey = "user.created";
-
-        // Create exchange
-        await ch.ExchangeDeclareAsync(
-            exchange: exchangeName,
-            type: ExchangeType.Topic,
-            durable: true,
-            autoDelete: false
-        );
+        var queueName = "";
+        var routingKey = "";
 
         // Declare queue with schema information in arguments as a new Dictionary of string and object
         //provide x-schema-type
@@ -75,84 +66,17 @@ public class Program
             arguments: queueArguments
         );
 
-        await ch.QueueBindAsync(queueName, exchangeName, routingKey);
-
         #endregion
 
         // Create an instance of the message to publish
 
-        string jsonUser = JsonConvert.SerializeObject(validUser, Formatting.None);
-        if (!ValidateSchema(jsonUser, typeof(UserV1)))
-        {
-            Console.WriteLine("Message rejected - schema not valid.");
-            return;
-        }
         
-        bool published = await PublishMessageAsync<UserV1>(
-            channel: ch,
-            message: validUser,
-            exchange: exchangeName,
-            routingKey: routingKey,
-            schemaVersion: "v1",
-            messageType: "user.created",
-            correlationId: validUser.UserId.ToString()
-        );
-
-        if (published)
-            Console.WriteLine("✅ Valid message published successfully.");
-        else
-            Console.WriteLine("❌ Failed to publish valid message.");
-
-
-        // Try to publish an invalid message
-        var invalidJson = "{\"Id\": 1002, \"UserName\": \"invalid.user\", \"Email\": \"invalid@example.com\"}";
-        if (!ValidateSchema(invalidJson, typeof(UserV1)))
-        {
-            Console.WriteLine("Message rejected - schema not valid.");
-            return;
-        }
     }
 
     private static bool ValidateSchema(string json, Type schemaClass)
     {
-        var schema = new JsonSchemaGenerator(new SystemTextJsonSchemaGeneratorSettings()).Generate(schemaClass);
-        ICollection<ValidationError> errors = schema.Validate(json);
-        foreach (var error in errors)
-        {
-            Console.WriteLine($"  - {error}");
-        }
-        return errors.Count == 0;
-    }
-
-    private static async Task<bool> PublishMessageAsync<T>(
-        IChannel channel,
-        T message,
-        string exchange,
-        string routingKey,
-        string schemaVersion,
-        string messageType,
-        string? correlationId = null
-        ) where T : class
-
-    {
-        var json = JsonConvert.SerializeObject(message, Formatting.None);
-
-        var messageId = Guid.NewGuid().ToString();
-        var properties = new BasicProperties
-        {
-            ContentType = "application/json",
-            MessageId = messageId,
-            CorrelationId = correlationId ?? Guid.NewGuid().ToString(),
-            Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
-            Headers = new Dictionary<string, object?>
-            {
-                { "schema-version", schemaVersion },
-                { "message-type", messageType },
-                { "published-at", DateTimeOffset.UtcNow.ToString("O") }
-            }
-        };
-
-        await channel.BasicPublishAsync(exchange, routingKey, false, properties, Encoding.UTF8.GetBytes(json));
-        return true;
+        // Generate JSON Schema using the JsonSchemaGenerator to generate schema out of the schemaClass
+        // using schema.Validate, validate the payload
+        // return the validation outcome
     }
 }
