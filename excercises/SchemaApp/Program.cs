@@ -68,9 +68,18 @@ public class Program
 
         #endregion
 
-        // Create an instance of the message to publish
+        var consumer = new AsyncEventingBasicConsumer(ch);
+        consumer.ReceivedAsync += async (model, ea) =>
+        {
+            var body = ea.Body.ToArray();
+            var message = Encoding.UTF8.GetString(body);
+            // validate the message, acknowledge if the schema is valid
+        };
 
-        
+        await ch.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer);
+
+        Console.WriteLine("Basic consumer started. Press [enter] to exit.");
+        Console.ReadLine();
     }
 
     private static bool ValidateSchema(string json, Type schemaClass)
@@ -79,4 +88,6 @@ public class Program
         // using schema.Validate, validate the payload
         // return the validation outcome
     }
+    
+    
 }
