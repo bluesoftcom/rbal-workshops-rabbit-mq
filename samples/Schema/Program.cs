@@ -50,11 +50,11 @@ public class Program
         #region Define Messaging Layer
 
         // Define queue with schema metadata in arguments
-        var queueName = "user.events.v1";
-        var exchangeName = "user.exchange";
-        var routingKey = "user.created";
+        var queueName = "q.common";
+        var exchangeName = "ex.common";
+        var routingKey = "*";
 
-        // Create exchange
+        // // Create exchange
         await ch.ExchangeDeclareAsync(
             exchange: exchangeName,
             type: ExchangeType.Topic,
@@ -62,20 +62,20 @@ public class Program
             autoDelete: false
         );
 
-        // Declare queue with schema information in arguments
-        var queueArguments = new Dictionary<string, object?>
-        {
-            { "x-schema-type", "json" },
-            { "x-schema-version", "v1" },
-            { "x-schema-definition", schemaJson }
-        };
+        // // Declare queue with schema information in arguments
+        // var queueArguments = new Dictionary<string, object?>
+        // {
+        //     { "x-schema-type", "json" },
+        //     { "x-schema-version", "v1" },
+        //     { "x-schema-definition", schemaJson }
+        // };
 
         await ch.QueueDeclareAsync(
-            queue: queueName,
             durable: true,
+            queue: queueName,
             exclusive: false,
             autoDelete: false,
-            arguments: queueArguments
+            arguments: null
         );
 
         await ch.QueueBindAsync(queueName, exchangeName, routingKey);
@@ -105,22 +105,57 @@ public class Program
             Console.WriteLine("Message rejected - schema not valid.");
             return;
         }
+
+        var usernames = new string[]
+        {
+            "andi.shima",
+            "aleksander.vangjeli",
+            "matilda.veliu",
+            "aida.ymeri",
+            "grent.mustafa",
+            "gentiana.papakroni",
+            "eldi.necaj",
+            "bleona.minaj",
+            "enxhi.maloku",
+            "arben.rexhepi",
+            "xhensila.jaho",
+            "megi.xhemo",
+            "ermal.kola",
+            "enri.iseberi",
+            "eva.kapciu",
+            "sara.bushati",
+            "paolo.xhovara",
+            "renato.alushi",
+            "jon.hoxha",
+            "gersjan.nano",
+            "irida.osja"
+        };
+        var random = new Random();
         
-        bool published = await PublishMessageAsync<UserV1>(
-            channel: ch,
-            message: validUser,
-            exchange: exchangeName,
-            routingKey: routingKey,
-            schemaVersion: "v1",
-            messageType: "user.created",
-            correlationId: validUser.UserId.ToString()
-        );
+        // Publish messages in a loop with random usernames as routing keys
+        Console.WriteLine("Publishing messages with random usernames as routing keys...\n");
 
-        if (published)
-            Console.WriteLine("✅ Valid message published successfully.");
-        else
-            Console.WriteLine("❌ Failed to publish valid message.");
 
+
+        for (int i = 0; i < 3000; i++)
+        {
+            var randomUsername = usernames[random.Next(usernames.Length)];
+
+            bool published = await PublishMessageAsync<UserV1>(
+                channel: ch,
+                message: validUser,
+                exchange: exchangeName,
+                routingKey: randomUsername,
+                schemaVersion: "v1",
+                messageType: "user.created",
+                correlationId: validUser.UserId.ToString()
+            );
+
+            if (published)
+                Console.WriteLine("✅ Valid message published successfully.");
+            else
+                Console.WriteLine("❌ Failed to publish valid message.");
+        }
 
         // Try to publish an invalid message
         var invalidJson = "{\"Id\": 1002, \"UserName\": \"invalid.user\", \"Email\": \"invalid@example.com\"}";
