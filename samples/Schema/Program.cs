@@ -49,37 +49,60 @@ public class Program
 
         #region Define Messaging Layer
 
-        // Define queue with schema metadata in arguments
-        var queueName = "q.common";
-        var exchangeName = "ex.common";
-        var routingKey = "*";
-
+        string exchangeName = "ex.orders";
         // // Create exchange
         await ch.ExchangeDeclareAsync(
             exchange: exchangeName,
-            type: ExchangeType.Topic,
+            type: ExchangeType.Headers,
             durable: true,
             autoDelete: false
         );
 
-        // // Declare queue with schema information in arguments
-        // var queueArguments = new Dictionary<string, object?>
-        // {
-        //     { "x-schema-type", "json" },
-        //     { "x-schema-version", "v1" },
-        //     { "x-schema-definition", schemaJson }
-        // };
-
         await ch.QueueDeclareAsync(
             durable: true,
-            queue: queueName,
+            queue: "q.orders.xml",
             exclusive: false,
             autoDelete: false,
             arguments: null
         );
 
-        await ch.QueueBindAsync(queueName, exchangeName, routingKey);
+        await ch.QueueDeclareAsync(
+            durable: true,
+            queue: "q.orders.json",
+            exclusive: false,
+            autoDelete: false,
+            arguments: null
+        );
 
+        await ch.QueueDeclareAsync(
+            durable: true,
+            queue: "q.orders.plaintext",
+            exclusive: false,
+            autoDelete: false,
+            arguments: null
+        );
+
+        var headerJsonArgs = new Dictionary<string, object>
+        {
+            { "x-match", "all" },
+            { "type", "json" }
+        };
+
+        var headerXmlArgs = new Dictionary<string, object>
+        {
+            { "x-match", "all" },
+            { "type", "xml" }
+        };
+
+        var headerPlaintextArgs = new Dictionary<string, object>
+        {
+            { "x-match", "all" },
+            { "type", "plaintext" }
+        };
+
+        await ch.QueueBindAsync("q.orders.json", "ex.orders", routingKey: string.Empty, arguments: headerJsonArgs);
+        await ch.QueueBindAsync("q.orders.xml", "ex.orders", routingKey: string.Empty, arguments: headerXmlArgs);
+        await ch.QueueBindAsync("q.orders.plaintext", "ex.orders", routingKey: string.Empty, arguments: headerPlaintextArgs);
         #endregion
 
         // Publish a valid message
@@ -106,31 +129,6 @@ public class Program
             return;
         }
 
-        var usernames = new string[]
-        {
-            "andi.shima",
-            "aleksander.vangjeli",
-            "matilda.veliu",
-            "aida.ymeri",
-            "grent.mustafa",
-            "gentiana.papakroni",
-            "eldi.necaj",
-            "bleona.minaj",
-            "enxhi.maloku",
-            "arben.rexhepi",
-            "xhensila.jaho",
-            "megi.xhemo",
-            "ermal.kola",
-            "enri.iseberi",
-            "eva.kapciu",
-            "sara.bushati",
-            "paolo.xhovara",
-            "renato.alushi",
-            "jon.hoxha",
-            "gersjan.nano",
-            "irida.osja"
-        };
-        var random = new Random();
         
         // Publish messages in a loop with random usernames as routing keys
         Console.WriteLine("Publishing messages with random usernames as routing keys...\n");
@@ -139,15 +137,19 @@ public class Program
 
         for (int i = 0; i < 3000; i++)
         {
-            var randomUsername = usernames[random.Next(usernames.Length)];
+            Dictionary<string, object?> headers = new Dictionary<string, object?>
+            {
+                { "type", "plaintext" }
+            };
 
             bool published = await PublishMessageAsync<UserV1>(
                 channel: ch,
                 message: validUser,
                 exchange: exchangeName,
-                routingKey: randomUsername,
+                routingKey: string.Empty,
                 schemaVersion: "v1",
                 messageType: "user.created",
+                headers: headers,
                 correlationId: validUser.UserId.ToString()
             );
 
@@ -184,6 +186,7 @@ public class Program
         string routingKey,
         string schemaVersion,
         string messageType,
+        Dictionary<string, object?> headers = null,
         string? correlationId = null
         ) where T : class
 
@@ -197,148 +200,11 @@ public class Program
             MessageId = messageId,
             CorrelationId = correlationId ?? Guid.NewGuid().ToString(),
             Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
-            Headers = new Dictionary<string, object?>
-            {
-                { "schema-version", schemaVersion },
-                { "message-type", messageType },
-                { "published-at", DateTimeOffset.UtcNow.ToString("O") }
-            }
+            Headers = headers
+            
         };
 
         await channel.BasicPublishAsync(exchange, routingKey, false, properties, Encoding.UTF8.GetBytes(json));
         return true;
-    }
-
-    private static Task SchemaExampleAvro()
-    {
-        string avroSchemaV1 = """
-        {
-          "type": "record",
-          "name": "User",
-          "namespace": "com.example.user",
-          "fields": [
-            {"name": "userId", "type": "long"},
-            {"name": "username", "type": "string"},
-            {"name": "email", "type": "string"}
-          ]
-        }
-        """;
-
-        string avroSchemaV2 = """
-        {
-          "type": "record",
-          "name": "User",
-          "namespace": "com.example.user",
-          "fields": [
-            {"name": "userId", "type": "long"},
-            {"name": "username", "type": "string"},
-            {"name": "email", "type": "string"},
-            {"name": "firstName", "type": ["null", "string"], "default": null},
-            {"name": "lastName", "type": ["null", "string"], "default": null},
-            {"name": "createdDate", "type": ["null", {"type": "long", "logicalType": "timestamp-millis"}], "default": null}
-          ]
-        }
-        """;
-
-        RecordSchema? schemaV1 = Schema.Parse(avroSchemaV1) as RecordSchema;
-        RecordSchema? schemaV2 = Schema.Parse(avroSchemaV2) as RecordSchema;
-
-        // Create a record with V1 schema
-        GenericRecord userV1 = new GenericRecord(schemaV2!);
-        userV1.Add("userId", 456L);
-        userV1.Add("username", "johndoe");
-        userV1.Add("email", "john@example.com");
-
-        // Serialize with V1 schema
-        using MemoryStream streamV1 = new MemoryStream();
-        BinaryEncoder encoderV1 = new BinaryEncoder(streamV1);
-        GenericWriter<GenericRecord> writerV1 = new GenericWriter<GenericRecord>(schemaV2);
-        writerV1.Write(userV1, encoderV1);
-        byte[] v1Bytes = streamV1.ToArray();
-
-        Console.WriteLine("User record created with V1 schema:");
-        foreach (var field in schemaV1!.Fields)
-        {
-            Console.WriteLine($"  {field.Name}: {userV1[field.Name]}");
-        }
-        Console.WriteLine();
-
-        // Read V1 data with V2 schema (schema evolution)
-        using MemoryStream readStreamV2 = new MemoryStream(v1Bytes);
-        BinaryDecoder decoderV2 = new BinaryDecoder(readStreamV2);
-        GenericReader<GenericRecord> readerV2 = new GenericReader<GenericRecord>(schemaV1, schemaV2); // writer schema V1, reader schema V2
-        GenericRecord userV2 = readerV2.Read(new GenericRecord(schemaV2!), decoderV2);
-
-        Console.WriteLine("Same data read with V2 schema (evolved):");
-        foreach (var field in schemaV2!.Fields)
-        {
-            var value = userV2.TryGetValue(field.Name, out var fieldValue) ? fieldValue : "N/A";
-            Console.WriteLine($"  {field.Name}: {value}");
-        }
-        Console.WriteLine();
-
-        return Task.CompletedTask;
-    }
-
-    private static async Task SchemaRegistryPattern(IChannel channel)
-    {
-        // Simulate a schema registry using a dedicated exchange and queue
-        var schemaRegistryExchange = "schema.registry";
-        var schemaRegistryQueue = "schema.registry.store";
-
-        await channel.ExchangeDeclareAsync(
-            exchange: schemaRegistryExchange,
-            type: ExchangeType.Direct,
-            durable: true,
-            autoDelete: false
-        );
-
-        await channel.QueueDeclareAsync(
-            queue: schemaRegistryQueue,
-            durable: true,
-            exclusive: false,
-            autoDelete: false
-        );
-
-        await channel.QueueBindAsync(schemaRegistryQueue, schemaRegistryExchange, "schema.register");
-
-        // Register schemas in the registry
-        var schemas = new[]
-        {
-            new {
-                Id = "customer-v1",
-                Type = "json",
-                Version = "1.0",
-                Subject = "customer",
-                Schema = new JsonSchemaGenerator(new SystemTextJsonSchemaGeneratorSettings()).Generate(typeof(UserV1)).ToJson()
-            },
-            new {
-                Id = "customer-v2",
-                Type = "json",
-                Version = "2.0",
-                Subject = "customer",
-                Schema = new JsonSchemaGenerator(new SystemTextJsonSchemaGeneratorSettings()).Generate(typeof(UserV2)).ToJson()
-            }
-        };
-
-        foreach (var schema in schemas)
-        {
-            var registrationMessage = new
-            {
-                Action = "REGISTER_SCHEMA",
-                SchemaId = schema.Id,
-                Subject = schema.Subject,
-                Version = schema.Version,
-                SchemaType = schema.Type,
-                SchemaDefinition = schema.Schema,
-                Timestamp = DateTime.UtcNow
-            };
-
-            var registrationJson = JsonConvert.SerializeObject(registrationMessage, Formatting.None);
-            var registrationBody = Encoding.UTF8.GetBytes(registrationJson);
-
-            await PublishMessageAsync(channel, registrationBody, schemaRegistryExchange, "", "v1", "schema.register");
-
-        }
     }
 }
