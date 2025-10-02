@@ -9,6 +9,8 @@ using NJsonSchema.Generation;
 using Avro;
 using Avro.Generic;
 using Avro.IO;
+using Models;
+using NJsonSchema.Validation;
 
 namespace SchemaApp;
 
@@ -16,6 +18,7 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
+        #region Initialize RabbitMQ Connection
         string host = ConfigurationManager.AppSettings["host"] ?? string.Empty;
         int configPort;
         int port = int.TryParse(ConfigurationManager.AppSettings["port"], out configPort) ? configPort : 5671;
@@ -36,12 +39,143 @@ public class Program
         IConnection conn = await factory.CreateConnectionAsync();
         IChannel ch = await conn.CreateChannelAsync();
 
-        await DemonstrateSchemaWithRabbitMQ(ch);
+        #endregion
+
+        // Generate JSON Schema
+        var settings = new SystemTextJsonSchemaGeneratorSettings();
+        var generator = new JsonSchemaGenerator(settings);
+        var userSchemaV1 = generator.Generate(typeof(UserV1));
+        var schemaJson = userSchemaV1.ToJson();
+
+        #region Define Messaging Layer
+
+        // Define queue with schema metadata in arguments
+        var queueName = "user.events.v1";
+        var exchangeName = "user.exchange";
+        var routingKey = "user.created";
+
+        // Create exchange
+        await ch.ExchangeDeclareAsync(
+            exchange: exchangeName,
+            type: ExchangeType.Topic,
+            durable: true,
+            autoDelete: false
+        );
+
+        // Declare queue with schema information in arguments
+        var queueArguments = new Dictionary<string, object?>
+        {
+            { "x-schema-type", "json" },
+            { "x-schema-version", "v1" },
+            { "x-schema-definition", schemaJson }
+        };
+
+        await ch.QueueDeclareAsync(
+            queue: queueName,
+            durable: true,
+            exclusive: false,
+            autoDelete: false,
+            arguments: queueArguments
+        );
+
+        await ch.QueueBindAsync(queueName, exchangeName, routingKey);
+
+        #endregion
+
+        // Publish a valid message
+        var validUser = new UserV1
+        {
+            UserId = 1001,
+            Email = "alice@example.com",
+            Username = "alice.johnson"
+        };
+        // var validUser = new UserV2
+        // {
+        //     UserId = 1001,
+        //     Username = "Alice Johnson",
+        //     Email = "alice@example.com",
+        //     FirstName = "Alice",
+        //     LastName = "Johnson",
+        //     CreatedDate = DateTime.Now
+        // };
+
+        string jsonUser = JsonConvert.SerializeObject(validUser, Formatting.None);
+        if (!ValidateSchema(jsonUser, typeof(UserV1)))
+        {
+            Console.WriteLine("Message rejected - schema not valid.");
+            return;
+        }
+        
+        bool published = await PublishMessageAsync<UserV1>(
+            channel: ch,
+            message: validUser,
+            exchange: exchangeName,
+            routingKey: routingKey,
+            schemaVersion: "v1",
+            messageType: "user.created",
+            correlationId: validUser.UserId.ToString()
+        );
+
+        if (published)
+            Console.WriteLine("✅ Valid message published successfully.");
+        else
+            Console.WriteLine("❌ Failed to publish valid message.");
+
+
+        // Try to publish an invalid message
+        var invalidJson = "{\"Id\": 1002, \"UserName\": \"invalid.user\", \"Email\": \"invalid@example.com\"}";
+        if (!ValidateSchema(invalidJson, typeof(UserV1)))
+        {
+            Console.WriteLine("Message rejected - schema not valid.");
+            return;
+        }
     }
 
-    private static Task SchemaEvolutionAvro()
+    private static bool ValidateSchema(string json, Type schemaClass)
     {
-        // Original schema (Version 1)
+        var schema = new JsonSchemaGenerator(new SystemTextJsonSchemaGeneratorSettings()).Generate(schemaClass);
+        ICollection<ValidationError> errors = schema.Validate(json);
+        foreach (var error in errors)
+        {
+            Console.WriteLine($"  - {error}");
+        }
+        return errors.Count == 0;
+    }
+
+    private static async Task<bool> PublishMessageAsync<T>(
+        IChannel channel,
+        T message,
+        string exchange,
+        string routingKey,
+        string schemaVersion,
+        string messageType,
+        string? correlationId = null
+        ) where T : class
+
+    {
+        var json = JsonConvert.SerializeObject(message, Formatting.None);
+
+        var messageId = Guid.NewGuid().ToString();
+        var properties = new BasicProperties
+        {
+            ContentType = "application/json",
+            MessageId = messageId,
+            CorrelationId = correlationId ?? Guid.NewGuid().ToString(),
+            Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
+            Headers = new Dictionary<string, object?>
+            {
+                { "schema-version", schemaVersion },
+                { "message-type", messageType },
+                { "published-at", DateTimeOffset.UtcNow.ToString("O") }
+            }
+        };
+
+        await channel.BasicPublishAsync(exchange, routingKey, false, properties, Encoding.UTF8.GetBytes(json));
+        return true;
+    }
+
+    private static Task SchemaExampleAvro()
+    {
         string avroSchemaV1 = """
         {
           "type": "record",
@@ -55,7 +189,6 @@ public class Program
         }
         """;
 
-        // Evolved schema (Version 2) - Added optional fields with defaults
         string avroSchemaV2 = """
         {
           "type": "record",
@@ -76,7 +209,7 @@ public class Program
         RecordSchema? schemaV2 = Schema.Parse(avroSchemaV2) as RecordSchema;
 
         // Create a record with V1 schema
-        GenericRecord userV1 = new GenericRecord(schemaV1!);
+        GenericRecord userV1 = new GenericRecord(schemaV2!);
         userV1.Add("userId", 456L);
         userV1.Add("username", "johndoe");
         userV1.Add("email", "john@example.com");
@@ -84,7 +217,7 @@ public class Program
         // Serialize with V1 schema
         using MemoryStream streamV1 = new MemoryStream();
         BinaryEncoder encoderV1 = new BinaryEncoder(streamV1);
-        GenericWriter<GenericRecord> writerV1 = new GenericWriter<GenericRecord>(schemaV1);
+        GenericWriter<GenericRecord> writerV1 = new GenericWriter<GenericRecord>(schemaV2);
         writerV1.Write(userV1, encoderV1);
         byte[] v1Bytes = streamV1.ToArray();
 
@@ -110,250 +243,6 @@ public class Program
         Console.WriteLine();
 
         return Task.CompletedTask;
-    }
-
-    private static Task SchemaEvolutionJson()
-    {
-        // Original user (V1)
-        var userV1 = new UserV1
-        {
-            UserId = 123,
-            Username = "john_doe",
-            Email = "john.doe@example.com"
-        };
-
-        // Evolved user (V2) - added optional fields
-        var userV2 = new UserV2
-        {
-            Id = 124,
-            Name = "jane_smith",
-            Email = "jane.smith@example.com",
-            FirstName = "Jane",
-            LastName = "Smith",
-            CreatedDate = DateTime.Now
-        };
-
-        var settings = new SystemTextJsonSchemaGeneratorSettings();
-        var generator = new JsonSchemaGenerator(settings);
-        var schemaV1 = generator.Generate(typeof(UserV1));
-        var schemaV2 = generator.Generate(typeof(UserV2));
-
-        var jsonV1 = JsonConvert.SerializeObject(userV1, Formatting.Indented);
-        var jsonV2 = JsonConvert.SerializeObject(userV2, Formatting.Indented);
-        
-        return Task.CompletedTask;
-    }
-
-    private static async Task DemonstrateSchemaWithRabbitMQ(IChannel channel)
-    {
-        // Define queue with schema metadata in arguments
-        var queueName = "user.events.v1";
-        var exchangeName = "user.exchange";
-        var routingKey = "user.created";
-
-        // Create exchange
-        await channel.ExchangeDeclareAsync(
-            exchange: exchangeName,
-            type: ExchangeType.Topic,
-            durable: true,
-            autoDelete: false
-        );
-
-        // Generate JSON Schema
-        var settings = new SystemTextJsonSchemaGeneratorSettings();
-        var generator = new JsonSchemaGenerator(settings);
-        var userSchema = generator.Generate(typeof(UserV2));
-        var schemaJson = userSchema.ToJson();
-
-        // Declare queue with schema information in arguments
-        var queueArguments = new Dictionary<string, object?>
-        {
-            { "x-schema-type", "json" },
-            { "x-schema-version", "v2" },
-            { "x-schema-definition", schemaJson },
-            { "x-message-ttl", 3600000 } // 1 hour TTL
-        };
-
-        // var schemaQueueArgs = new Dictionary<string, object?>
-        // {
-        //     // Schema identification
-        //     { "x-schema-name", "CustomerEvent" },
-        //     { "x-schema-version", "2.0.0" },
-        //     { "x-schema-format", "json-schema" },
-        //     { "x-schema-compatibility", "backward" },
-            
-        //     // Schema definition (can be full schema or reference)
-        //     { "x-schema-registry-id", "customer-event-v2" },
-        //     { "x-schema-subject", "customer.events" },
-            
-        //     // Validation settings
-        //     { "x-schema-validation", "strict" },
-        //     { "x-schema-required", true },
-            
-        //     // Additional queue policies
-        //     { "x-message-ttl", 86400000 }, // 24 hours
-        //     { "x-max-length", 10000 },
-        //     { "x-overflow", "reject-publish" }
-        // };
-
-        await channel.QueueDeclareAsync(
-            queue: queueName,
-            durable: true,
-            exclusive: false,
-            autoDelete: false,
-            arguments: queueArguments
-        );
-
-        await channel.QueueBindAsync(queueName, exchangeName, routingKey);
-
-        // Publish a valid message
-        var validUser = new UserV2
-        {
-            Id = 1001,
-            Name = "Alice Johnson",
-            Email = "alice@example.com",
-            FirstName = "Alice",
-            LastName = "Johnson",
-            CreatedDate = DateTime.Now
-        };
-
-        var validJson = JsonConvert.SerializeObject(validUser, Formatting.None);
-        var validMessageBody = Encoding.UTF8.GetBytes(validJson);
-
-        // Validate against schema before publishing
-        var validationErrors = userSchema.Validate(validJson);
-        var isValid = validationErrors.Count == 0;
-
-        var properties = new BasicProperties
-        {
-            ContentType = "application/json",
-            ContentEncoding = "utf-8",
-            Headers = new Dictionary<string, object?>
-            {
-                { "schema-version", "v2" },
-                { "schema-valid", isValid },
-                { "message-type", "customer.created" }
-            },
-            Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
-            MessageId = Guid.NewGuid().ToString()
-        };
-
-        await channel.BasicPublishAsync(
-            exchange: exchangeName,
-            routingKey: routingKey,
-            mandatory: false,
-            basicProperties: properties,
-            body: validMessageBody
-        );
-
-        // Try to publish an invalid message (missing required field)
-        var invalidJson = "{\"Id\": 1002, \"Email\": \"invalid@example.com\"}";
-        var invalidValidationErrors = userSchema.Validate(invalidJson);
-        var isInvalidValid = invalidValidationErrors.Count == 0;
-
-        if (!isInvalidValid)
-        {
-            Console.WriteLine("Validation errors:");
-            foreach (var error in invalidValidationErrors)
-            {
-                Console.WriteLine($"  - {error}");
-            }
-            Console.WriteLine("Message rejected - not published to queue.");
-        }
-    }
-
-    private static async Task DemonstrateAvroSchemaWithRabbitMQ(IChannel channel)
-    {
-        var queueName = "user.events.avro";
-        var exchangeName = "user.exchange";
-        var routingKey = "user.created";
-
-        // Create exchange
-        await channel.ExchangeDeclareAsync(
-            exchange: exchangeName,
-            type: ExchangeType.Direct,
-            durable: true,
-            autoDelete: false
-        );
-
-        // Define Avro schema
-        string avroSchemaJson = """
-        {
-          "type": "record",
-          "name": "OrderEvent",
-          "namespace": "com.example.orders",
-          "fields": [
-            {"name": "orderId", "type": "long"},
-            {"name": "customerId", "type": "long"},
-            {"name": "productName", "type": "string"},
-            {"name": "quantity", "type": "int"},
-            {"name": "totalPrice", "type": "double"},
-            {"name": "orderTimestamp", "type": "string"},
-            {"name": "status", "type": {"type": "enum", "name": "OrderStatus", "symbols": ["PENDING", "CONFIRMED", "SHIPPED", "DELIVERED"]}}
-          ]
-        }
-        """;
-
-        var avroSchema = Schema.Parse(avroSchemaJson);
-
-        // Declare queue with Avro schema metadata
-        var queueArguments = new Dictionary<string, object?>
-        {
-            { "x-schema-type", "avro" },
-            { "x-schema-version", "2.0" },
-            { "x-schema-definition", avroSchemaJson },
-            { "x-message-ttl", 7200000 } // 2 hours TTL
-        };
-
-        await channel.QueueDeclareAsync(
-            queue: queueName,
-            durable: true,
-            exclusive: false,
-            autoDelete: false,
-            arguments: queueArguments
-        );
-
-        await channel.QueueBindAsync(queueName, exchangeName, routingKey);
-
-        // Create and serialize an Avro message
-        var orderRecord = new GenericRecord(avroSchema as RecordSchema);
-        orderRecord.Add("orderId", 5001L);
-        orderRecord.Add("customerId", 1001L);
-        orderRecord.Add("productName", "Wireless Mouse");
-        orderRecord.Add("quantity", 1);
-        orderRecord.Add("totalPrice", 29.99);
-        orderRecord.Add("orderTimestamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ"));
-        orderRecord.Add("status", "PENDING");
-
-        // Serialize to Avro binary
-        using var memoryStream = new MemoryStream();
-        var encoder = new BinaryEncoder(memoryStream);
-        var writer = new GenericWriter<GenericRecord>(avroSchema as RecordSchema);
-        writer.Write(orderRecord, encoder);
-        var avroBytes = memoryStream.ToArray();
-
-        var avroProperties = new BasicProperties
-        {
-            ContentType = "application/avro",
-            ContentEncoding = "binary",
-            Headers = new Dictionary<string, object?>
-            {
-                { "schema-version", "2.0" },
-                { "schema-type", "avro" },
-                { "message-type", "order.created" },
-                { "avro-schema-id", "order-event-v1" }
-            },
-            Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds()),
-            MessageId = Guid.NewGuid().ToString()
-        };
-
-        await channel.BasicPublishAsync(
-            exchange: exchangeName,
-            routingKey: routingKey,
-            mandatory: false,
-            basicProperties: avroProperties,
-            body: avroBytes
-        );
     }
 
     private static async Task SchemaRegistryPattern(IChannel channel)
@@ -413,150 +302,8 @@ public class Program
             var registrationJson = JsonConvert.SerializeObject(registrationMessage, Formatting.None);
             var registrationBody = Encoding.UTF8.GetBytes(registrationJson);
 
-            var registrationProperties = new BasicProperties
-            {
-                ContentType = "application/json",
-                Headers = new Dictionary<string, object?>
-                {
-                    { "action", "register" },
-                    { "schema-id", schema.Id },
-                    { "subject", schema.Subject }
-                },
-                MessageId = Guid.NewGuid().ToString()
-            };
+            await PublishMessageAsync(channel, registrationBody, schemaRegistryExchange, "", "v1", "schema.register");
 
-            await channel.BasicPublishAsync(
-                exchange: schemaRegistryExchange,
-                routingKey: "schema.register",
-                mandatory: false,
-                basicProperties: registrationProperties,
-                body: registrationBody
-            );
         }
     }
-
-    private static async Task DemonstrateProducerSchemaEnforcement(IChannel channel)
-    {
-        var enforcedQueue = "enforced.schema.queue";
-        
-        // Queue with strict schema enforcement
-        await channel.QueueDeclareAsync(
-            queue: enforcedQueue,
-            durable: true,
-            exclusive: false,
-            autoDelete: false,
-            arguments: new Dictionary<string, object?>
-            {
-                { "x-schema-enforcement", "strict" },
-                { "x-schema-required-headers", "schema-name,schema-version,schema-validated" },
-                { "x-reject-invalid-schema", true }
-            }
-        );
-
-        // Demonstrate proper schema enforcement in producer
-        var producerValidator = new SchemaValidator();
-        
-        // Valid message
-        var validCustomer = new UserV1
-        {
-            UserId = 12345,
-            Username = "User",
-            Email = "sample@test.com"
-        };
-
-        var validationResult = producerValidator.ValidateUserV1(validCustomer);
-        
-        if (validationResult.IsValid)
-        {
-            var enforcedProperties = new BasicProperties
-            {
-                ContentType = "application/json",
-                Headers = new Dictionary<string, object?>
-                {
-                    { "schema-name", "User" },
-                    { "schema-version", "2.0.0" },
-                    { "schema-validated", true },
-                    { "schema-validation-timestamp", DateTimeOffset.UtcNow.ToUnixTimeSeconds() },
-                    { "producer-validation-passed", true }
-                }
-            };
-
-            await channel.BasicPublishAsync(
-                exchange: "",
-                routingKey: enforcedQueue,
-                mandatory: false,
-                basicProperties: enforcedProperties,
-                body: Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(validCustomer))
-            );
-        }
-        else
-        {
-            foreach (var error in validationResult.Errors)
-            {
-                Console.WriteLine($"        • {error}");
-            }
-        }
-    }
-}
-
-// Schema Validation Helper Class
-public class SchemaValidator
-{
-    private readonly JsonSchema _userV1Schema;
-    private readonly JsonSchema _userV2Schema;
-
-    public SchemaValidator()
-    {
-        var generator = new JsonSchemaGenerator(new SystemTextJsonSchemaGeneratorSettings());
-        _userV1Schema = generator.Generate(typeof(UserV1));
-        _userV2Schema = generator.Generate(typeof(UserV2));
-    }
-
-    public ValidationResult ValidateUserV1(UserV1 user)
-    {
-        var json = JsonConvert.SerializeObject(user);
-        var errors = _userV1Schema.Validate(json);
-        return new ValidationResult
-        {
-            IsValid = errors.Count == 0,
-            Errors = errors.Select(e => e.ToString()).ToList()
-        };
-    }
-
-    public ValidationResult ValidateUser(UserV2 user)
-    {
-        var json = JsonConvert.SerializeObject(user);
-        var errors = _userV2Schema.Validate(json);
-        return new ValidationResult
-        {
-            IsValid = errors.Count == 0,
-            Errors = errors.Select(e => e.ToString()).ToList()
-        };
-    }
-}
-
-public class ValidationResult
-{
-    public bool IsValid { get; set; }
-    public List<string> Errors { get; set; } = new();
-}
-
-// Domain Models for JSON Schema demonstration
-public class UserV1
-{
-    public int UserId { get; set; }
-    public required string Username { get; set; }
-    public required string Email { get; set; }
-}
-
-public class UserV2
-{
-    public int Id { get; set; }
-    public required string Name { get; set; }
-    public required string Email { get; set; }
-
-    // New optional fields for evolution
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
-    public DateTime? CreatedDate { get; set; }
 }

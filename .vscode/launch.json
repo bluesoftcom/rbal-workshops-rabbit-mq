@@ -1,0 +1,77 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug BasicConsumerApp",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/samples/BasicConsumer/bin/Debug/net9.0/BasicConsumer.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/samples/BasicConsumer",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "preLaunchTask": "build-BasicConsumer"
+        },
+        {
+            "name": "Debug BasicPublisherApp",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/samples/BasicPublisher/bin/Debug/net9.0/BasicPublisher.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/samples/BasicPublisher",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "preLaunchTask": "build-BasicPublisher"
+        },
+        {
+            "name": "Debug SchemaApp",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/samples/Schema/bin/Debug/net9.0/SchemaApp.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/samples/Schema",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "preLaunchTask": "build-SchemaApp"
+        },
+        {
+            "name": "Debug DatabaseConnectionTest",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/samples/DatabaseConnectionTest/bin/Debug/net9.0/DatabaseConnectionTest.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/samples/DatabaseConnectionTest",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "preLaunchTask": "build-DatabaseConnectionTest"
+        },
+        {
+            "name": "Debug AccessControl",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/samples/AccessControl/bin/Debug/net9.0/AccessControl.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/samples/AccessControl",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "preLaunchTask": "build-AccessControl"
+        },
+        {
+            "name": "Debug InboxOutboxPattern",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/samples/InboxOutboxPattern/bin/Debug/net9.0/InboxOutboxPattern.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/samples/InboxOutboxPattern",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "preLaunchTask": "build-InboxOutboxPattern"
+        },
+        {
+            "name": "C#: Debug Active File-Based App",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${file}"
+        }
+    ]
+}

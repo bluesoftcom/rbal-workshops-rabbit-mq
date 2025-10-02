@@ -20,8 +20,8 @@ public class Program
         string virtualHost = ConfigurationManager.AppSettings["virtualHost"] ?? "/";
 
         // Database connection string for AWS RDS SQL Server
-        string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"]?.ConnectionString 
-            ?? "Server=your-aws-rds-instance.amazonaws.com;Database=InboxOutboxDemo;User Id=admin;Password=your-password;TrustServerCertificate=true;";
+        string connectionString = ConfigurationManager.ConnectionStrings["SqlServerConnectionNamespace"]?.ConnectionString
+        connectionString = connectionString.replace("{username}", ConfigurationManager.AppSettings["userName"]);
 
         // Initialize database
         using var dbContext = new InboxOutboxDbContext(connectionString);
