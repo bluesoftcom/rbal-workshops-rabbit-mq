@@ -1,0 +1,45 @@
+{
+  "users": [
+    { "name": "admin", "password": "admin", "tags": "administrator" },
+    { "name": "orders_app", "password": "orders_app", "tags": "management" }
+  ],
+  "vhosts": [{ "name": "/" }],
+  "permissions": [
+    {
+      "user": "admin", "vhost": "/",
+      "configure": ".*", "write": ".*", "read": ".*"
+    },
+    {
+      "user": "orders_app", "vhost": "/",
+      "configure": "^ex\\.|^q\\.", "write": "^ex\\.", "read": "^q\\."
+    }
+  ],
+  "topic_permissions": [],
+  "parameters": [],
+  "global_parameters": [],
+  "policies": [],
+  "exchanges": [
+    { "name": "ex.orders", "vhost": "/", "type": "topic", "durable": true, "auto_delete": false, "internal": false, "arguments": {} },
+    { "name": "orders.retry.ex", "vhost": "/", "type": "topic", "durable": true, "auto_delete": false, "internal": false, "arguments": {} },
+    { "name": "orders.error.ex", "vhost": "/", "type": "topic", "durable": true, "auto_delete": false, "internal": false, "arguments": {} }
+  ],
+  "queues": [
+    {
+      "name": "q.orders", "vhost": "/", "durable": true, "auto_delete": false,
+      "arguments": { "x-queue-type": "quorum", "x-dead-letter-exchange": "orders.retry.ex" }
+    },
+    {
+      "name": "q.orders.retry.10s", "vhost": "/", "durable": true, "auto_delete": false,
+      "arguments": { "x-queue-type": "quorum", "x-message-ttl": 10000, "x-dead-letter-exchange": "ex.orders" }
+    },
+    {
+      "name": "q.orders.dlq", "vhost": "/", "durable": true, "auto_delete": false,
+      "arguments": { "x-queue-type": "quorum" }
+    }
+  ],
+  "bindings": [
+    { "source": "ex.orders", "vhost": "/", "destination": "q.orders", "destination_type": "queue", "routing_key": "order.*", "arguments": {} },
+    { "source": "orders.retry.ex", "vhost": "/", "destination": "q.orders.retry.10s", "destination_type": "queue", "routing_key": "#", "arguments": {} },
+    { "source": "orders.error.ex", "vhost": "/", "destination": "q.orders.dlq", "destination_type": "queue", "routing_key": "#", "arguments": {} }
+  ]
+}
