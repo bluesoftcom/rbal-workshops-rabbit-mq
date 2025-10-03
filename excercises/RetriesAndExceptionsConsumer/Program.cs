@@ -31,6 +31,9 @@ public class Program
         IConnection conn = await factory.CreateConnectionAsync();
         IChannel ch = await conn.CreateChannelAsync();
 
+        // TODO: Add the prefetch count
+        // Use BasicQosAsync to allow concurrent processing
+
         Console.WriteLine("✅ Connected to RabbitMQ\n");
         #endregion
 
@@ -40,9 +43,13 @@ public class Program
             try
             {
                 // Implement retry logic using message headers
+                // There are a few parameters in the header we want to use:
                 //"x-max-retries"
                 //"x-delay"
                 //"x-retry-count"
+                // Delay the task
+                // Overwrite the headers properties.Headers["x-retry-count"] = (int)properties.Headers["x-retry-count"] + 1;
+                // Afterwards call a publisher with BasicPublishAsync to republish the message
 
                 byte[] payloadBytes = ea.Body.ToArray();
                 string status = Encoding.UTF8.GetString(payloadBytes);
@@ -50,15 +57,12 @@ public class Program
                 {   
                     throw new NotImplementedException("Simulating consumer failure");
                 }
-                await ch.BasicAckAsync(ea.DeliveryTag, false);
                 Console.WriteLine($"Message {ea.BasicProperties.MessageId} processed correctly");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error processing message {ea.BasicProperties.MessageId}: {ex.Message}");
-                ch.BasicNackAsync(ea.DeliveryTag, false, false);
             }
-
         };
 
         await ch.BasicConsumeAsync(
