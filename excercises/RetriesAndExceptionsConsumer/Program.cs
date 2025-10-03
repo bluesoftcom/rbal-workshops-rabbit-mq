@@ -33,6 +33,7 @@ public class Program
 
         // TODO: Add the prefetch count
         // Use BasicQosAsync to allow concurrent processing
+        await ch.BasicQosAsync(0, 10, false);
 
         Console.WriteLine("✅ Connected to RabbitMQ\n");
         #endregion
@@ -40,6 +41,8 @@ public class Program
         var consumer = new AsyncEventingBasicConsumer(ch);
         consumer.ReceivedAsync += async (model, ea) =>
         {
+            byte[] payloadBytes = ea.Body.ToArray();
+
             try
             {
                 // Implement retry logic using message headers
@@ -51,17 +54,50 @@ public class Program
                 // Overwrite the headers properties.Headers["x-retry-count"] = (int)properties.Headers["x-retry-count"] + 1;
                 // Afterwards call a publisher with BasicPublishAsync to republish the message
 
-                byte[] payloadBytes = ea.Body.ToArray();
                 string status = Encoding.UTF8.GetString(payloadBytes);
                 if (status == "failed")
-                {   
+                {
                     throw new NotImplementedException("Simulating consumer failure");
                 }
                 Console.WriteLine($"Message {ea.BasicProperties.MessageId} processed correctly");
+
+                await ch.BasicAckAsync(ea.DeliveryTag, false);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error processing message {ea.BasicProperties.MessageId}: {ex.Message}");
+                var properties = ea.BasicProperties;
+
+                int maxRetries = int.Parse(Encoding.UTF8.GetString((byte[])properties.Headers["x-max-retries"]));
+                int delay = int.Parse(Encoding.UTF8.GetString((byte[])properties.Headers["x-delay"]));
+                int retryCount = int.Parse(Encoding.UTF8.GetString((byte[])properties.Headers["x-retry-count"]));
+
+                retryCount++;
+
+                if (retryCount < maxRetries)
+                {
+                    properties.Headers["x-retry-count"] = retryCount + 1;
+
+                    BasicProperties newMessageProperties = new BasicProperties();
+                    newMessageProperties.Headers = new Dictionary<string, object?>
+                    {
+                        { "x-retry-count", retryCount.ToString() },
+                        { "x-max-retries", maxRetries.ToString() },
+                        { "x-delay", delay.ToString() }
+                    };
+                    newMessageProperties.MessageId = properties.MessageId;
+
+                    await Task.Delay(delay * retryCount);
+
+                    await ch.BasicAckAsync(ea.DeliveryTag, false);
+                    Console.WriteLine($"Message {ea.BasicProperties.MessageId} retried");
+
+                    await ch.BasicPublishAsync(ea.Exchange, ea.RoutingKey, false, newMessageProperties, payloadBytes);
+                }
+                else
+                {
+                    Console.WriteLine($"Message {ea.BasicProperties.MessageId} reached max retries. Sending to dead letter queue.");
+                    await ch.BasicNackAsync(ea.DeliveryTag, false, false); // Send to DLQ}
+                }
             }
         };
 

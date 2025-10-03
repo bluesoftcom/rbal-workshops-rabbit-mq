@@ -10,7 +10,7 @@ public class Program
     static SqliteConnection _sqliteConnection = null!;
     public static async Task Main(string[] args)
     {
-        using SqliteConnection sqlConnection = new SqliteConnection("Data Source=:memory:");
+        using SqliteConnection sqlConnection = new SqliteConnection("Data Source=mydb.sqlite");
         sqlConnection.Open();
         InitDatabase(sqlConnection);
 

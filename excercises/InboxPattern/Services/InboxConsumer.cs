@@ -76,7 +76,8 @@ public class InboxConsumer
                 CorrelationId = correlationId,
                 EventType = "",
                 SourceExchange = exchange,
-                SourceRoutingKey = routingKey
+                SourceRoutingKey = routingKey,
+                Payload = payload
             };
 
             await InsertInboxMessageAsync(transaction, inboxMessage);

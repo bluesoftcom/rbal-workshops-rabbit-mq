@@ -9,10 +9,10 @@ public class Program
     static SqliteConnection _sqliteConnection = null!;
     public static async Task Main(string[] args)
     {
-        using SqliteConnection sqlConnection = new SqliteConnection("Data Source=:memory:");
+        using SqliteConnection sqlConnection = new SqliteConnection("Data Source=mydb.sqlite");
         sqlConnection.Open();
         InitDatabase(sqlConnection);
-
+        Console.WriteLine(Environment.CurrentDirectory);
         string hostName = ConfigurationManager.AppSettings["host"];
         int port = int.Parse(ConfigurationManager.AppSettings["port"]);
         string userName = ConfigurationManager.AppSettings["userName"];

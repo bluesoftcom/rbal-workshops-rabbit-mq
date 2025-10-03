@@ -9,7 +9,6 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        #region Initialize RabbitMQ Connection
         string host = ConfigurationManager.AppSettings["host"] ?? "localhost";
         int configPort;
         int port = int.TryParse(ConfigurationManager.AppSettings["port"], out configPort) ? configPort : 5672;
@@ -31,7 +30,6 @@ public class Program
         IChannel ch = await conn.CreateChannelAsync();
 
         Console.WriteLine("Connected to RabbitMQ");
-        #endregion
 
         var exchangeName = "ex.payments";
         var queue = "q.payments";
@@ -45,7 +43,7 @@ public class Program
 
         var random = new Random();
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 5; i++)
         {
             var currentState = consumerStates[random.Next(consumerStates.Length)];
 
@@ -64,6 +62,23 @@ public class Program
     private static async Task ManageRabbitMQObjects(IChannel ch, string exchangeName, string queueName)
     {
         // Declare the DLQ and DLX
+        await ch.ExchangeDeclareAsync(
+            exchange: $"{exchangeName}.dlx",
+            type: ExchangeType.Direct,
+            durable: true,
+            autoDelete: false
+        );
+        await ch.QueueDeclareAsync(
+            queue: $"{queueName}.dlq",
+            durable: true,
+            exclusive: false,
+            autoDelete: false
+        );
+        await ch.QueueBindAsync(
+            queue: $"{queueName}.dlq",
+            exchange: $"{exchangeName}.dlx",
+            routingKey: string.Empty
+        );
 
         await ch.ExchangeDeclareAsync(
             exchange: exchangeName,
@@ -75,11 +90,11 @@ public class Program
         var arguments = new Dictionary<string, object?>
         {
             //TODO: Queue configuration
-            //{ "x-dead-letter-exchange", $"{exchangeName}.dlx"},
-            //{"x-dead-letter-routing-key", string.Empty},
-            //{ "x-queue-type", "quorum" },
-            //{ "x-delivery-limit", 5 },
-            //{ "x-message-ttl", 10000 } // 10 seconds
+            { "x-dead-letter-exchange", $"{exchangeName}.dlx"},
+            //{ "x-dead-letter-routing-key", string.Empty},
+            { "x-queue-type", "quorum" },
+            { "x-delivery-limit", 5 },
+            { "x-message-ttl", 10000 } // 10 seconds
         };
 
         await ch.QueueDeclareAsync(
@@ -122,7 +137,7 @@ public class Program
                 {
                     { "x-retry-count", "0" },
                     { "x-max-retries", "5" },
-                    { "x-delay", "10000" }
+                    { "x-delay", "1000" }
                 }
             };
 

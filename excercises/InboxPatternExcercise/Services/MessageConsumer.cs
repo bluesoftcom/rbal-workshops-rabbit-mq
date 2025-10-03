@@ -1,24 +1,28 @@
-﻿using System;
-using System.Text;
-using System.Threading.Tasks;
-using System.Configuration;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using Newtonsoft.Json;
+using System;
+using System.Configuration;
+using System.Text;
+using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace InboxOutboxPattern;
 
-// Inbox Consumer - Implements Inbox Pattern for idempotent message processing
 public class MessageConsumer
 {
-    private IChannel _channel;
-    private SqliteConnection _sqlConnection;
+    private static IChannel _channel;
+    private static SqliteConnection _sqlConnection;
+    private static SqliteTransaction _transaction;
 
     public MessageConsumer(IChannel channel, SqliteConnection sqlConnection)
     {
         _channel = channel;
         _sqlConnection = sqlConnection;
+        if (_sqlConnection.State != System.Data.ConnectionState.Open)
+            _sqlConnection.Open();
+        _transaction = _sqlConnection.BeginTransaction();
     }
 
     public async Task StartConsumingAsync(string queue)
@@ -26,28 +30,51 @@ public class MessageConsumer
         var consumer = new AsyncEventingBasicConsumer(_channel);
         consumer.ReceivedAsync += async (model, ea) =>
         {
-            // Begin a transaction on the database
+            try
+            {
+                var messageId = ea.BasicProperties.MessageId;
+                var payload = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-            // Get the messageId and other important properties from the message properties
+                bool isAlreadyProcessed = CheckIfMessageProcessedAsync(_transaction, messageId!);
+                if (isAlreadyProcessed)
+                {
+                    Console.WriteLine($"The message {messageId} was already processed!");
+                    return;
+                }
 
-            // Get the payload
-            var payload = Encoding.UTF8.GetString(ea.Body.ToArray());
-            // use JsonConvert.DeserializeObject<Order> to convert the payload to the Order object
+                InboxMessage messageForDB = new InboxMessage
+                {
+                    CorrelationId = ea.BasicProperties.CorrelationId,
+                    Id = new Guid(messageId!),
+                    Payload = payload,
+                    ProcessedAt = DateTime.UtcNow,
+                    SourceExchange = ea.Exchange,
+                    SourceRoutingKey = ea.RoutingKey
+                };
+                InsertInboxMessageAsync(_transaction, messageForDB);
 
-            // Check if the message was already recieved
+                string selectSql = "SELECT id FROM tb_test;";
+                using (var selectCmd = new SqliteCommand(selectSql, _sqlConnection, _transaction))
+                using (var reader = selectCmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"id: {reader.GetInt32(0)}");
+                    }
+                }
 
-            // If message was not recieved create a new InboxMessage
-            // and insert it into the DB with InsertInboxMessageAsync
+                Console.WriteLine(messageId);
+                Console.WriteLine("Received the message with payload: " + payload);
 
-            // Perform validations, do the critical business logic
-            Console.WriteLine("Recieved the message with payload: "+ payload+"");
+                MarkInboxMessageAsProcessedAsync(_transaction, messageId);
 
-            // If all went correctly, update the record as processed with MarkInboxMessageAsProcessedAsync
-            // his step is redundant with the transaction - but it is an option to leave the message for later processing
-
-            // if all went correctly, acknowledge the message and commit transaction
-
-            // if an exception is caught - do a negative acknowledge and rollback the transaction
+                await _channel.BasicAckAsync(ea.DeliveryTag, false);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
+            }
         };
 
         await _channel.BasicConsumeAsync(queue, false, consumer);
@@ -55,25 +82,27 @@ public class MessageConsumer
         Console.WriteLine("Consumer started - waiting for messages...");
     }
 
-    private async Task InsertInboxMessageAsync(SqliteTransaction transaction, InboxMessage inboxMessage)
+    private void InsertInboxMessageAsync(SqliteTransaction transaction, InboxMessage inboxMessage)
     {
         string insertSql = @"
-                INSERT INTO tb_inbox (Id, CorrelationId, SourceExchange, SourceRoutingKey, Payload, EventType, IsProcessed)
-                VALUES (@Id, @CorrelationId, @SourceExchange, @SourceRoutingKey, @Payload, @EventType, @IsProcessed);";
+        INSERT INTO tb_inbox (Id, CorrelationId, SourceExchange, SourceRoutingKey, Payload, EventType, IsProcessed)
+        VALUES (@Id, @CorrelationId, @SourceExchange, @SourceRoutingKey, @Payload, @EventType, @IsProcessed)
+        RETURNING Id;";
 
         using var command = new SqliteCommand(insertSql, _sqlConnection, transaction);
-        command.Parameters.AddWithValue("@EventType", inboxMessage.EventType);
-        command.Parameters.AddWithValue("@Payload", inboxMessage.Payload);
+        command.Parameters.AddWithValue("@EventType", inboxMessage.EventType ?? (object)DBNull.Value);
+        command.Parameters.AddWithValue("@Payload", inboxMessage.Payload ?? (object)DBNull.Value);
         command.Parameters.AddWithValue("@CorrelationId", inboxMessage.CorrelationId ?? (object)DBNull.Value);
         command.Parameters.AddWithValue("@SourceExchange", inboxMessage.SourceExchange ?? (object)DBNull.Value);
         command.Parameters.AddWithValue("@SourceRoutingKey", inboxMessage.SourceRoutingKey ?? (object)DBNull.Value);
         command.Parameters.AddWithValue("@IsProcessed", 0);
         command.Parameters.AddWithValue("@Id", inboxMessage.Id);
 
-        await command.ExecuteNonQueryAsync();
+        var result = command.ExecuteScalar();
+        Console.Write(result is Guid guid ? guid : Guid.Parse(result.ToString()!));
     }
 
-    private async Task MarkInboxMessageAsProcessedAsync(SqliteTransaction transaction, string messageId)
+    private void MarkInboxMessageAsProcessedAsync(SqliteTransaction transaction, string messageId)
     {
         string updateSql = @"
             UPDATE tb_inbox 
@@ -84,28 +113,46 @@ public class MessageConsumer
         command.Parameters.AddWithValue("@Id", messageId);
         command.Parameters.AddWithValue("@ProcessedAt", DateTime.Now);
 
-        await command.ExecuteNonQueryAsync();
+        command.ExecuteNonQuery();
     }
 
-    private async Task<bool> CheckIfMessageProcessedAsync(SqliteTransaction transaction, string messageId)
+    private bool CheckIfMessageProcessedAsync(SqliteTransaction transaction, string messageId)
     {
+        //string selectCmd = "SELECT Id FROM tb_inbox;";
+
+        //using (var reader = selectCmd.ExecuteReader())
+        //{
+        //    while (reader.Read())
+        //    {
+        //        Console.WriteLine($"id: {reader.GetInt32(0)}");
+        //    }
+        //}
         string checkSql = "SELECT IsProcessed FROM tb_inbox WHERE Id = @Id";
 
         using var command = new SqliteCommand(checkSql, _sqlConnection, transaction);
         command.Parameters.AddWithValue("@Id", messageId);
 
-        var result = await command.ExecuteScalarAsync();
+        var result = command.ExecuteScalar();
         return result != null && (bool)result;
     }
 
     public async Task StopConsumingAsync()
     {
+        if (_transaction != null)
+        {
+            _transaction.Commit(); // or _transaction.Rollback() if needed
+            _transaction.Dispose();
+        }
         if (_channel != null)
         {
             await _channel.CloseAsync();
             _channel.Dispose();
         }
-
-        Console.WriteLine("­Inbox consumer stopped");
+        if (_sqlConnection != null)
+        {
+            _sqlConnection.Close();
+            _sqlConnection.Dispose();
+        }
+        Console.WriteLine("Inbox consumer stopped");
     }
 }
