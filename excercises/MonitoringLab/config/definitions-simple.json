@@ -1,0 +1,30 @@
+{
+  "users": [
+    { "name": "admin", "password": "admin", "tags": "administrator" },
+    { "name": "orders_app", "password": "orders_app", "tags": "management" }
+  ],
+  "vhosts": [{ "name": "/" }],
+  "permissions": [
+    {
+      "user": "admin", "vhost": "/",
+      "configure": ".*", "write": ".*", "read": ".*"
+    },
+    {
+      "user": "orders_app", "vhost": "/",
+      "configure": "^ex\\.|^q\\.", "write": "^ex\\.", "read": "^q\\."
+    }
+  ],
+  "exchanges": [
+    {"name": "ex.orders", "vhost": "/", "type": "direct", "durable": true, "auto_delete": false, "internal": false, "arguments": {}}
+  ],
+  "queues": [
+    {"name": "q.orders", "vhost": "/", "durable": true, "auto_delete": false, "arguments": {}}
+  ],
+  "bindings": [
+    {"source": "ex.orders", "vhost": "/", "destination": "q.orders", "destination_type": "queue", "routing_key": "orders", "arguments": {}}
+  ],
+  "topic_permissions": [],
+  "parameters": [],
+  "global_parameters": [],
+  "policies": []
+}
