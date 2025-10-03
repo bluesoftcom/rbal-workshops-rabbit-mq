@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System.Text;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace InboxOutboxPattern;
 
@@ -22,7 +23,7 @@ public class OutboxProducer
         SqliteTransaction? transaction = _connection.BeginTransaction();
 
         using var selectCmd = new SqliteCommand(@"
-                SELECT Id, Payload, Exchange, RoutingKey, CorrelationId FROM tb_outbox
+                SELECT Id, Payload, Exchange, RoutingKey, CorrelationId, EventType, ProducedAt FROM tb_outbox
                 WHERE IsProcessed = 0
                 ORDER BY ProducedAt ASC
                 LIMIT 1;", _connection);
@@ -67,7 +68,7 @@ public class OutboxProducer
         transaction.Commit();
     }
 
-    public async void SaveMessageToDB(Order order, SqliteConnection connection)
+    public async void SaveMessageToDB(Order order)
     {
         string exchange = "ex.orders.inboxoutbox";
         string routingKey = string.Empty;
@@ -75,7 +76,7 @@ public class OutboxProducer
         Console.WriteLine($"Creating order: {order.Id} for customer {order.CustomerId}");
         Console.WriteLine($"Product: {order.ProductName}, Qty: {order.Quantity}, Price: ${order.Price:F2}");
 
-        using var transaction = connection.BeginTransaction();
+        using var transaction = _connection.BeginTransaction();
 
         try
         {
@@ -97,7 +98,7 @@ public class OutboxProducer
                 VALUES (@CorrelationId, @Exchange, @RoutingKey, @Payload, @EventType, @ProducedAt, @IsProcessed);
                 SELECT last_insert_rowid();";
 
-            using var command = new SqliteCommand(insertSql, connection, transaction);
+            using var command = new SqliteCommand(insertSql, _connection, transaction);
             command.Parameters.AddWithValue("@CorrelationId", outboxMessage.CorrelationId ?? (object)DBNull.Value);
             command.Parameters.AddWithValue("@Exchange", outboxMessage.Exchange ?? (object)DBNull.Value);
             command.Parameters.AddWithValue("@RoutingKey", outboxMessage.RoutingKey ?? (object)DBNull.Value);

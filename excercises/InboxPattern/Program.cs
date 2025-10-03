@@ -80,7 +80,7 @@ public class Program
         {
             try
             {
-                producer.SaveMessageToDB(order, sqlConnection);
+                producer.SaveMessageToDB(order);
                 Console.WriteLine($"Order created: {order.Id} for Customer {order.CustomerId}");
             }
             catch (Exception ex)
