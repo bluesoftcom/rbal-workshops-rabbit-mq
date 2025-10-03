@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "RetriesAndExceptions\\RetriesAndExceptionsProducer.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "RetriesAndExceptionsConsumer\\RetriesAndExceptionsConsumer.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
