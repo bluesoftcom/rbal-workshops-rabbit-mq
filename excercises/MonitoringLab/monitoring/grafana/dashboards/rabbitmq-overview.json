@@ -1,0 +1,53 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Connections",
+      "targets": [{ "expr": "sum(rabbitmq_connections)" }],
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "stat",
+      "title": "Channels",
+      "targets": [{ "expr": "sum(rabbitmq_channels)" }],
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "stat",
+      "title": "Queues",
+      "targets": [{ "expr": "sum(rabbitmq_queues)" }],
+      "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Publish Rate",
+      "targets": [{ "expr": "sum(rate(rabbitmq_channel_messages_published_total[1m]))" }],
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 7 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Deliveries (Acked)",
+      "targets": [{ "expr": "sum(rate(rabbitmq_channel_messages_acked_total[1m]))" }],
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 7 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Ready Messages per Queue",
+      "targets": [{ "expr": "sum by (queue) (rabbitmq_queue_messages_ready)" }],
+      "gridPos": { "x": 0, "y": 11, "w": 12, "h": 7 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Unacked Messages per Queue",
+      "targets": [{ "expr": "sum by (queue) (rabbitmq_queue_messages_unacked)" }],
+      "gridPos": { "x": 12, "y": 11, "w": 12, "h": 7 }
+    }
+  ],
+  "schemaVersion": 38,
+  "style": "dark",
+  "title": "RabbitMQ Overview",
+  "timezone": "browser",
+  "version": 2
+}
